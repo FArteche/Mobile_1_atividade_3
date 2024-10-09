@@ -1,8 +1,10 @@
 import 'package:atividade3/Model/carro.dart';
 import 'package:atividade3/Model/destino.dart';
-import 'package:atividade3/Model/preco_gasolina.dart';
+import 'package:atividade3/Model/combustivel.dart';
 import 'package:atividade3/menuCalculo.dart';
 import 'package:atividade3/menuCarro.dart';
+import 'package:atividade3/menuCombustivel.dart';
+import 'package:atividade3/menuDestino.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -29,38 +31,58 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-  List<carro> listCarro = [];
-  List<destino> listDestino = [];
-  List<preco_gasolina> listPreco = [];
-
 class _MyHomePageState extends State<MyHomePage> {
   int _index = 0;
+
+  List<carro> listCarro = [carro(nome: 'Vectra', autonomia: 2.0)];
+  List<destino> listDestino = [destino(nomeDestino: 'POA', distancia: 500)];
+  List<combustivel> listCombustivel = [
+    combustivel(preco: 5.4, data: DateTime(2024, 12, 22), tipo: 'Diesel')
+  ];
 
   void _onItemTapped(int index) {
     setState(() {
       _index = index;
+      _paginas[index] = _reloadPage(index);
     });
   }
 
-  static final List<Widget> _paginas = <Widget>[
-    Menucalculo(
-      listCarro: listCarro,
-      listDestino: listDestino,
-      listPreco: listPreco,
+  static late List<Widget> _paginas = <Widget>[];
+
+  @override
+  void initState() {
+    super.initState();
+    _paginas = [
+      Menucalculo(
+        listCarro: listCarro,
+        listDestino: listDestino,
+        listPreco: listCombustivel,
       ),
-    Menucarro(listCarro: listCarro),
-  ];
-
-  void adicionarDestino(String nomeDestino, double distancia) {
-    setState(() {
-      listDestino.add(destino(nomeDestino: nomeDestino, distancia: distancia));
-    });
+      Menucarro(listCarro: listCarro),
+      Menudestino(listDestino: listDestino),
+      Menucombustivel(listCombustivel: listCombustivel)
+    ];
   }
 
-  void adicionarCombustivel(String tipo, double preco, DateTime data) {
-    setState(() {
-      listPreco.add(preco_gasolina(preco: preco, data: data, tipo: tipo));
-    });
+  Widget _reloadPage(int index) {
+    switch (index) {
+      case 0:
+        return Menucalculo(
+          listCarro: listCarro,
+          listDestino: listDestino,
+          listPreco: listCombustivel,
+        );
+      case 1:
+        return Menucarro(listCarro: listCarro); // Recarrega a Page2
+      case 2:
+        return Menudestino(listDestino: listDestino); // Recarrega a Page3
+      case 3:
+        return Menucombustivel(listCombustivel: listCombustivel);
+      default:
+        return const SnackBar(
+          content: Text('Erro, Widget não encontrado'),
+        );
+    }
   }
 
   @override

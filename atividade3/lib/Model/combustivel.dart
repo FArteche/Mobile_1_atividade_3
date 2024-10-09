@@ -1,9 +1,9 @@
-class preco_gasolina {
+class combustivel {
   DateTime data;
   String tipo;
   double preco;
 
-  preco_gasolina({
+  combustivel({
     required this.preco,
     required this.data,
     required this.tipo,

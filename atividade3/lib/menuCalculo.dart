@@ -1,13 +1,13 @@
 import 'package:atividade3/Model/carro.dart';
 import 'package:atividade3/Model/destino.dart';
-import 'package:atividade3/Model/preco_gasolina.dart';
+import 'package:atividade3/Model/combustivel.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class Menucalculo extends StatefulWidget {
   List<carro> listCarro;
   List<destino> listDestino;
-  List<preco_gasolina> listPreco;
+  List<combustivel> listPreco;
 
   Menucalculo(
       {required this.listCarro,
@@ -19,10 +19,17 @@ class Menucalculo extends StatefulWidget {
 }
 
 class _MenucalculoState extends State<Menucalculo> {
+
   carro? _carroSelecionado;
   destino? _destinoSelecionado;
-  preco_gasolina? _precoSelecionado;
+  combustivel? _precoSelecionado;
+  double? resultado;
 
+  //TODO - Terminar o calculo e colocar ele no botão correto
+  void calculo (double autonomia, double preco, double distancia){
+    
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -35,7 +42,7 @@ class _MenucalculoState extends State<Menucalculo> {
           height: 400,
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 235, 131, 23),
+              color: const Color.fromARGB(255, 255, 254, 186),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
@@ -108,20 +115,20 @@ class _MenucalculoState extends State<Menucalculo> {
                     color: Color.fromARGB(255, 16, 55, 92),
                   ),
                 ),
-                DropdownButton<preco_gasolina>(
+                DropdownButton<combustivel>(
                   style: const TextStyle(
                     color: Color.fromARGB(255, 16, 55, 92),
                   ),
                   dropdownColor: const Color.fromARGB(255, 244, 246, 200),
                   hint: const Text('Combustível'),
                   value: _precoSelecionado,
-                  onChanged: (preco_gasolina? novoCombustivel) {
+                  onChanged: (combustivel? novoCombustivel) {
                     setState(() {
                       _precoSelecionado = novoCombustivel;
                     });
                   },
-                  items: widget.listPreco.map((preco_gasolina precos) {
-                    return DropdownMenuItem<preco_gasolina>(
+                  items: widget.listPreco.map((combustivel precos) {
+                    return DropdownMenuItem<combustivel>(
                       value: precos,
                       child: Text(precos.toString()),
                     );
@@ -129,32 +136,12 @@ class _MenucalculoState extends State<Menucalculo> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    setState(() {
-                      widget.listCarro.add(
-                        carro(
-                          nome: "Vectra",
-                          autonomia: 14.7,
-                        ),
-                      );
-                      widget.listDestino.add(
-                        destino(
-                          nomeDestino: "Raio que o parta",
-                          distancia: 50.01,
-                        ),
-                      );
-                      widget.listPreco.add(
-                        preco_gasolina(
-                          preco: 5.5,
-                          data: DateTime(2024, 10, 24),
-                          tipo: "Alcool",
-                        ),
-                      );
-                    });
+                    setState(
+                      () {},
+                    );
                   },
-                  child: const Text("Adicionar Carro"),
+                  child: const Text("Calcular"),
                 ),
-                Text(
-                    "$_carroSelecionado / $_destinoSelecionado / $_precoSelecionado"),
               ],
             ),
           ),

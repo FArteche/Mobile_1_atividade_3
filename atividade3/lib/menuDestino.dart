@@ -1,46 +1,47 @@
 import 'dart:async';
 
-import 'package:atividade3/Model/carro.dart';
+import 'package:atividade3/Model/destino.dart';
 import 'package:atividade3/card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 // ignore: must_be_immutable
-class Menucarro extends StatefulWidget {
-  List<carro> listCarro;
+class Menudestino extends StatefulWidget {
+  List<destino> listDestino;
 
-  Menucarro({
-    required this.listCarro,
+  Menudestino({
+    required this.listDestino,
   });
 
   @override
-  State<Menucarro> createState() => _MenucarroState();
+  State<Menudestino> createState() => _MenudestinoState();
 }
 
-class _MenucarroState extends State<Menucarro> {
-  final StreamController<List<carro>> _streamController =
-      StreamController<List<carro>>();
+class _MenudestinoState extends State<Menudestino> {
+  final StreamController<List<destino>> _streamController =
+      StreamController<List<destino>>();
 
-  final controllerNome = TextEditingController();
-  final controllerautonomia = TextEditingController();
+  final controllerNomeDestino = TextEditingController();
+  final controllerDistancia = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _streamController.add(widget.listCarro);
+    _streamController.add(widget.listDestino);
   }
 
-  void __addNovoItem(String nome, double autonomia) {
+  void __addNovoItem(String nomeDestino, double distancia) {
     setState(() {
-      widget.listCarro.add(carro(nome: nome, autonomia: autonomia));
-      _streamController.add(widget.listCarro);
+      widget.listDestino
+          .add(destino(nomeDestino: nomeDestino, distancia: distancia));
+      _streamController.add(widget.listDestino);
     });
   }
 
   void __removeItem(int index) {
     setState(() {
-      widget.listCarro.removeAt(index);
-      _streamController.add(widget.listCarro);
+      widget.listDestino.removeAt(index);
+      _streamController.add(widget.listDestino);
     });
   }
 
@@ -53,7 +54,7 @@ class _MenucarroState extends State<Menucarro> {
       child: Center(
         child: SizedBox(
           child: Center(
-            child: StreamBuilder<List<carro>>(
+            child: StreamBuilder<List<destino>>(
               stream: _streamController.stream,
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
@@ -64,11 +65,11 @@ class _MenucarroState extends State<Menucarro> {
                   children: [
                     Expanded(
                       child: ListView.builder(
-                        itemCount: widget.listCarro.length,
+                        itemCount: widget.listDestino.length,
                         itemBuilder: (context, index) {
-                          return CardC(
-                            nome: widget.listCarro[index].nome,
-                            autonomia: widget.listCarro[index].autonomia,
+                          return CardD(
+                            nomeDestino: widget.listDestino[index].nomeDestino,
+                            distancia: widget.listDestino[index].distancia,
                             onRemove: () => __removeItem(index),
                           );
                         },
@@ -99,7 +100,7 @@ class _MenucarroState extends State<Menucarro> {
                                                 MainAxisAlignment.start,
                                             children: <Widget>[
                                               const Text(
-                                                'Adicionar Veículo',
+                                                'Adicionar Destino',
                                                 style: TextStyle(fontSize: 30),
                                               ),
                                               const SizedBox(
@@ -108,16 +109,16 @@ class _MenucarroState extends State<Menucarro> {
                                               SizedBox(
                                                 width: 300,
                                                 child: TextField(
-                                                  controller: controllerNome,
+                                                  controller:
+                                                      controllerNomeDestino,
                                                   decoration:
                                                       const InputDecoration(
                                                     fillColor: Color.fromARGB(
                                                         255, 253, 180, 101),
                                                     filled: true,
                                                     labelText:
-                                                        'Nome do veículo',
-                                                    border:
-                                                        const OutlineInputBorder(
+                                                        'Local de destino',
+                                                    border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.all(
                                                         Radius.circular(12),
@@ -133,16 +134,15 @@ class _MenucarroState extends State<Menucarro> {
                                                 width: 300,
                                                 child: TextField(
                                                   controller:
-                                                      controllerautonomia,
+                                                      controllerDistancia,
                                                   decoration:
                                                       const InputDecoration(
                                                     fillColor: Color.fromARGB(
                                                         255, 253, 180, 101),
                                                     filled: true,
                                                     labelText:
-                                                        'Autonomia do veículo',
-                                                    border:
-                                                        const OutlineInputBorder(
+                                                        'Distância (Em KM)',
+                                                    border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.all(
                                                         Radius.circular(12),
@@ -167,15 +167,17 @@ class _MenucarroState extends State<Menucarro> {
                                                   width: 150,
                                                   child: FloatingActionButton(
                                                     onPressed: () {
-                                                      if (controllerNome
+                                                      if (controllerNomeDestino
                                                           .text.isNotEmpty) {
                                                         __addNovoItem(
-                                                            controllerNome.text,
+                                                            controllerNomeDestino
+                                                                .text,
                                                             double.parse(
-                                                                controllerautonomia
+                                                                controllerDistancia
                                                                     .text));
-                                                        controllerNome.clear();
-                                                        controllerautonomia
+                                                        controllerNomeDestino
+                                                            .clear();
+                                                        controllerDistancia
                                                             .clear();
                                                         Navigator.pop(context);
                                                       }
@@ -198,7 +200,7 @@ class _MenucarroState extends State<Menucarro> {
                               },
                               backgroundColor:
                                   const Color.fromARGB(255, 255, 254, 186),
-                              child: const Text("Adicionar Carro"),
+                              child: const Text("Adicionar destino"),
                             ),
                           ),
                         ),

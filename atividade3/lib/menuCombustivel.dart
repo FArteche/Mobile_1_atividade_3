@@ -1,46 +1,65 @@
 import 'dart:async';
 
-import 'package:atividade3/Model/carro.dart';
+import 'package:atividade3/Model/combustivel.dart';
 import 'package:atividade3/card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
-class Menucarro extends StatefulWidget {
-  List<carro> listCarro;
+class Menucombustivel extends StatefulWidget {
+  List<combustivel> listCombustivel;
 
-  Menucarro({
-    required this.listCarro,
+  Menucombustivel({
+    required this.listCombustivel,
   });
 
   @override
-  State<Menucarro> createState() => _MenucarroState();
+  State<Menucombustivel> createState() => _MenucombustivelState();
 }
 
-class _MenucarroState extends State<Menucarro> {
-  final StreamController<List<carro>> _streamController =
-      StreamController<List<carro>>();
+class _MenucombustivelState extends State<Menucombustivel> {
+  final StreamController<List<combustivel>> _streamController =
+      StreamController<List<combustivel>>();
 
-  final controllerNome = TextEditingController();
-  final controllerautonomia = TextEditingController();
+  final controllerTipo = TextEditingController();
+  final controllerPreco = TextEditingController();
+  final controllerdata = TextEditingController();
+  DateTime dataSelecionada = DateTime.now();
+
+  Future<void> _selectData(BuildContext context) async {
+    final DateTime? dataEscolhida = await showDatePicker(
+      context: context,
+      initialDate: dataSelecionada,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+    );
+    if (dataEscolhida != null && dataEscolhida != dataSelecionada) {
+      setState(() {
+        dataSelecionada = dataEscolhida;
+        controllerdata.text = DateFormat('dd-MM-yyyy').format(dataEscolhida);
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    _streamController.add(widget.listCarro);
+    _streamController.add(widget.listCombustivel);
   }
 
-  void __addNovoItem(String nome, double autonomia) {
+  void __addNovoItem(double preco, DateTime data, String tipo) {
     setState(() {
-      widget.listCarro.add(carro(nome: nome, autonomia: autonomia));
-      _streamController.add(widget.listCarro);
+      widget.listCombustivel
+          .add(combustivel(preco: preco, data: data, tipo: tipo));
+      _streamController.add(widget.listCombustivel);
     });
   }
 
   void __removeItem(int index) {
     setState(() {
-      widget.listCarro.removeAt(index);
-      _streamController.add(widget.listCarro);
+      widget.listCombustivel.removeAt(index);
+      _streamController.add(widget.listCombustivel);
     });
   }
 
@@ -53,7 +72,7 @@ class _MenucarroState extends State<Menucarro> {
       child: Center(
         child: SizedBox(
           child: Center(
-            child: StreamBuilder<List<carro>>(
+            child: StreamBuilder<List<combustivel>>(
               stream: _streamController.stream,
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
@@ -64,11 +83,12 @@ class _MenucarroState extends State<Menucarro> {
                   children: [
                     Expanded(
                       child: ListView.builder(
-                        itemCount: widget.listCarro.length,
+                        itemCount: widget.listCombustivel.length,
                         itemBuilder: (context, index) {
-                          return CardC(
-                            nome: widget.listCarro[index].nome,
-                            autonomia: widget.listCarro[index].autonomia,
+                          return CardCo(
+                            data: widget.listCombustivel[index].data,
+                            tipo: widget.listCombustivel[index].tipo,
+                            preco: widget.listCombustivel[index].preco,
                             onRemove: () => __removeItem(index),
                           );
                         },
@@ -99,7 +119,7 @@ class _MenucarroState extends State<Menucarro> {
                                                 MainAxisAlignment.start,
                                             children: <Widget>[
                                               const Text(
-                                                'Adicionar Veículo',
+                                                'Adicionar Combustível',
                                                 style: TextStyle(fontSize: 30),
                                               ),
                                               const SizedBox(
@@ -108,16 +128,15 @@ class _MenucarroState extends State<Menucarro> {
                                               SizedBox(
                                                 width: 300,
                                                 child: TextField(
-                                                  controller: controllerNome,
+                                                  controller: controllerTipo,
                                                   decoration:
                                                       const InputDecoration(
                                                     fillColor: Color.fromARGB(
                                                         255, 253, 180, 101),
                                                     filled: true,
                                                     labelText:
-                                                        'Nome do veículo',
-                                                    border:
-                                                        const OutlineInputBorder(
+                                                        'Tipo do Combustível',
+                                                    border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.all(
                                                         Radius.circular(12),
@@ -132,17 +151,15 @@ class _MenucarroState extends State<Menucarro> {
                                               SizedBox(
                                                 width: 300,
                                                 child: TextField(
-                                                  controller:
-                                                      controllerautonomia,
+                                                  controller: controllerPreco,
                                                   decoration:
                                                       const InputDecoration(
                                                     fillColor: Color.fromARGB(
                                                         255, 253, 180, 101),
                                                     filled: true,
                                                     labelText:
-                                                        'Autonomia do veículo',
-                                                    border:
-                                                        const OutlineInputBorder(
+                                                        'Preço do combustível no dia',
+                                                    border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.all(
                                                         Radius.circular(12),
@@ -160,6 +177,29 @@ class _MenucarroState extends State<Menucarro> {
                                                   ],
                                                 ),
                                               ),
+                                              const SizedBox(height: 10,),
+                                              SizedBox(
+                                                width: 300,
+                                                child: TextField(
+                                                  controller: controllerdata,
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    fillColor: Color.fromARGB(
+                                                        255, 253, 180, 101),
+                                                    filled: true,
+                                                    labelText:
+                                                        'Selecione o dia',
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                        Radius.circular(12),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  readOnly: true,
+                                                  onTap: () => _selectData(context ),
+                                                ),
+                                              ),
                                               Padding(
                                                 padding:
                                                     const EdgeInsets.all(30.0),
@@ -167,17 +207,15 @@ class _MenucarroState extends State<Menucarro> {
                                                   width: 150,
                                                   child: FloatingActionButton(
                                                     onPressed: () {
-                                                      if (controllerNome
+                                                      if (controllerTipo
                                                           .text.isNotEmpty) {
-                                                        __addNovoItem(
-                                                            controllerNome.text,
-                                                            double.parse(
-                                                                controllerautonomia
-                                                                    .text));
-                                                        controllerNome.clear();
-                                                        controllerautonomia
+                                                        __addNovoItem(double.parse(controllerPreco.text), dataSelecionada, controllerTipo.text);
+                                                        controllerPreco
                                                             .clear();
-                                                        Navigator.pop(context);
+                                                        controllerTipo
+                                                            .clear();
+                                                            controllerdata.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
+                                                            Navigator.pop(context);
                                                       }
                                                     },
                                                     backgroundColor:
@@ -198,7 +236,7 @@ class _MenucarroState extends State<Menucarro> {
                               },
                               backgroundColor:
                                   const Color.fromARGB(255, 255, 254, 186),
-                              child: const Text("Adicionar Carro"),
+                              child: const Text("Adicionar Combustível"),
                             ),
                           ),
                         ),
