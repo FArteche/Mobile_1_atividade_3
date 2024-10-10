@@ -10,6 +10,6 @@ class combustivel {
   });
 
     String toString(){
-    return "$tipo /$preco Reais";
+    return "$tipo R\$$preco";
   }
 }
